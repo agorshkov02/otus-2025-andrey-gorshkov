@@ -10,7 +10,7 @@
 docker run -d -e POSTGRES_USER=andrey -e POSTGRES_PASSWORD=andrey --name otus-db -p 5432:5432 postgres:18
 ```
 
-Используя `psql`  инициировал 2 сессии за суперпользователя **andrey**: 
+Используя `psql` инициировал 2 сессии за суперпользователя **andrey**: 
 
 ![](./screenshots/1.png)
 
