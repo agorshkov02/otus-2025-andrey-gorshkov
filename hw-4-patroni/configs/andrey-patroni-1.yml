@@ -1,0 +1,51 @@
+scope: "andrey-patroni"
+namespace: "/db/"
+name: "andrey-patroni-1"
+restapi:
+  listen: 10.128.0.10:8008
+  connect_address: 10.128.0.10:8008
+etcd:
+  host:
+    - 10.128.0.26:2379
+    - 10.128.0.11:2379
+    - 10.128.0.31:2379
+bootstrap:
+  dcs:
+    ttl: 30
+    loop_wait: 10
+    retry_timeout: 10
+    maximum_lag_on_failover: 1048576
+    synchronous_mode: false
+    postgresql:
+      use_pg_rewind: true
+      use_slots: true
+      parameters:
+        wal_level: replica # включаем запись wal для работы репликации
+        hot_standby: "on" # разрешаем "читать" с реплики
+  initdb:
+    - encoding: UTF8
+  pg_hba:
+    - host replication replicator 10.128.0.0/16 md5 # разрешаем подключаться из сети ВМ
+    - host all all 10.128.0.0/16 md5 # разрешаем подключаться из сети ВМ
+  users:
+    admin:
+      password: "123"
+      options:
+        - createrole
+        - createdb
+
+postgresql:
+  listen: 10.128.0.10:5432
+  connect_address: 10.128.0.10:5432
+  data_dir: /var/lib/postgresql/18/main
+  bin_dir: /usr/lib/postgresql/18/bin
+  authentication:
+    replication:
+      username: postgres
+      password: "123"
+    rewind:
+      username: postgres
+      password: "123"
+    superuser:
+      username: postgres
+      password: "123"
