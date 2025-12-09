@@ -1,0 +1,17 @@
+architecture: replication
+
+auth:
+  username: andrey-helm
+  password: "123"
+  database: andrey-helm
+
+  replicationUsername: andrey-helm-replication
+  replicationPassword: "123"
+
+primary:
+  persistence:
+    enabled: true
+    size: 250Mi
+
+readReplicas:
+  replicaCount: 2
