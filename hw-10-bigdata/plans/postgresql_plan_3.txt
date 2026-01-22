@@ -1,0 +1,40 @@
+ Limit  (cost=2875522.50..2875530.66 rows=50 width=41) (actual time=25419.031..25778.012 rows=50 loops=1)
+   Buffers: shared hit=387 read=2184493, temp read=521825 written=1355240
+   ->  Gather  (cost=2875522.50..12500206.75 rows=58987440 width=41) (actual time=25325.802..25684.779 rows=50 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         Buffers: shared hit=387 read=2184493, temp read=521825 written=1355240
+         ->  Parallel Hash Join  (cost=2874522.50..6600462.75 rows=24578100 width=41) (actual time=25316.105..25316.201 rows=34 lo
+ops=3)
+               Hash Cond: (t2.id = t1.id)
+               Buffers: shared hit=387 read=2184493, temp read=521825 written=1355240
+               ->  Parallel Hash Join  (cost=1401258.25..3667231.88 rows=24578100 width=32) (actual time=13649.670..18551.364 rows
+=19662458 loops=3)
+                     Hash Cond: (t2.id = t3.id)
+                     Buffers: shared hit=3 read=1456477, temp read=521395 written=533900
+                     ->  Parallel Seq Scan on test2 t2  (cost=0.00..974021.00 rows=24578100 width=16) (actual time=0.505..4049.467
+ rows=19662458 loops=3)
+                           Buffers: shared read=728240
+                     ->  Parallel Hash  (cost=974021.00..974021.00 rows=24578100 width=16) (actual time=7314.188..7314.189 rows=19
+662458 loops=3)
+                           Buckets: 131072  Batches: 1024  Memory Usage: 3776kB
+                           Buffers: shared hit=3 read=728237, temp written=266688
+                           ->  Parallel Seq Scan on test3 t3  (cost=0.00..974021.00 rows=24578100 width=16) (actual time=0.626..49
+60.481 rows=19662458 loops=3)
+                                 Buffers: shared hit=3 read=728237
+               ->  Parallel Hash  (cost=974021.00..974021.00 rows=24578100 width=33) (actual time=5078.902..5078.903 rows=19662458
+ loops=3)
+                     Buckets: 65536  Batches: 2048  Memory Usage: 0kB
+                     Buffers: shared hit=224 read=728016, temp written=443328
+                     ->  Parallel Seq Scan on test1 t1  (cost=0.00..974021.00 rows=24578100 width=33) (actual time=67.311..2095.01
+3 rows=19662458 loops=3)
+                           Buffers: shared hit=224 read=728016
+ Planning:
+   Buffers: shared hit=180
+ Planning Time: 1.439 ms
+ JIT:
+   Functions: 55
+   Options: Inlining true, Optimization true, Expressions true, Deforming true
+   Timing: Generation 1.243 ms, Inlining 79.348 ms, Optimization 128.560 ms, Emission 85.200 ms, Total 294.350 ms
+ Execution Time: 25795.329 ms
+ 

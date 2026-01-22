@@ -1,0 +1,23 @@
+ Limit  (cost=1098218.94..1098218.95 rows=1 width=8) (actual time=4302.703..4308.316 rows=1 loops=1)
+   Buffers: shared read=728240
+   ->  Finalize Aggregate  (cost=1098218.94..1098218.95 rows=1 width=8) (actual time=4227.004..4232.616 rows=1 loops=1)
+         Buffers: shared read=728240
+         ->  Gather  (cost=1098218.73..1098218.94 rows=2 width=8) (actual time=4226.786..4232.604 rows=3 loops=1)
+               Workers Planned: 2
+               Workers Launched: 2
+               Buffers: shared read=728240
+               ->  Partial Aggregate  (cost=1097218.73..1097218.74 rows=1 width=8) (actual time=4217.438..4217.439 rows=1 loops=3)
+                     Buffers: shared read=728240
+                     ->  Parallel Seq Scan on test1  (cost=0.00..1096911.50 rows=122890 width=0) (actual time=26.378..4201.145 rows=196624 loops=3)
+                           Filter: ((id % '100'::bigint) = 0)
+                           Rows Removed by Filter: 19465834
+                           Buffers: shared read=728240
+ Planning:
+   Buffers: shared hit=27 read=1
+ Planning Time: 0.827 ms
+ JIT:
+   Functions: 15
+   Options: Inlining true, Optimization true, Expressions true, Deforming true
+   Timing: Generation 1.353 ms, Inlining 88.693 ms, Optimization 32.596 ms, Emission 32.822 ms, Total 155.463 ms
+ Execution Time: 4476.566 ms
+(22 rows)

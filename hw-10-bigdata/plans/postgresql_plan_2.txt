@@ -1,0 +1,23 @@
+ Limit  (cost=14881570.20..14881570.33 rows=50 width=41) (actual time=32949.775..32949.780 rows=50 loops=1)
+   Buffers: shared hit=99 read=728144, temp read=739548 written=1112039
+   ->  Sort  (cost=14881570.20..15029038.80 rows=58987440 width=41) (actual time=32897.029..32897.032 rows=50 loops=1)
+         Sort Key: (count(*)) DESC
+         Sort Method: top-N heapsort  Memory: 28kB
+         Buffers: shared hit=99 read=728144, temp read=739548 written=1112039
+         ->  HashAggregate  (cost=10719237.65..12922049.86 rows=58987440 width=41) (actual time=12510.639..28922.157 rows=58987375
+ loops=1)
+               Group Key: key
+               Planned Partitions: 128  Batches: 6561  Memory Usage: 4121kB  Disk Usage: 3016144kB
+               Buffers: shared hit=96 read=728144, temp read=739548 written=1112039
+               ->  Seq Scan on test1  (cost=0.00..1318114.40 rows=58987440 width=25) (actual time=0.018..2770.471 rows=58987375 lo
+ops=1)
+                     Buffers: shared hit=96 read=728144
+ Planning:
+   Buffers: shared hit=71 read=4 dirtied=2
+ Planning Time: 2.227 ms
+ JIT:
+   Functions: 11
+   Options: Inlining true, Optimization true, Expressions true, Deforming true
+   Timing: Generation 1.520 ms, Inlining 18.833 ms, Optimization 52.797 ms, Emission 38.509 ms, Total 111.659 ms
+ Execution Time: 33073.846 ms
+(20 rows)

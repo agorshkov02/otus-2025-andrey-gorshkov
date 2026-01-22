@@ -1,0 +1,12 @@
+   ┌─explain──────────────────────────────────────────────────────────────────────────────┐
+1. │ Expression (Project names)                                                           │
+2. │   Limit (preliminary LIMIT)                                                          │
+3. │     Sorting (Sorting for ORDER BY)                                                   │
+4. │       Expression ((Before ORDER BY + Projection))                                    │
+5. │         Aggregating                                                                  │
+6. │           Expression ((Before GROUP BY + Change column names to column identifiers)) │
+7. │             ReadFromMergeTree (default.test1)                                        │
+   └──────────────────────────────────────────────────────────────────────────────────────┘
+
+50 rows in set. Elapsed: 4.258 sec. Processed 58.99 million rows, 1.42 GB (13.85 million rows/s., 332.47 MB/s.)
+Peak memory usage: 6.50 GiB

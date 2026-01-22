@@ -1,0 +1,21 @@
+   ┌─explain────────────────────────────────────────────────────────────────┐
+ 1. │ Expression ((Project names + Projection))                              │
+ 2. │   Limit (preliminary LIMIT)                                            │
+ 3. │     Expression (Post Join Actions)                                     │
+ 4. │       Join (JOIN FillRightFirst)                                       │
+ 5. │         Expression (Left Pre Join Actions)                             │
+ 6. │           Expression (Change column names to column identifiers)       │
+ 7. │             ReadFromMergeTree (default.test3)                          │
+ 8. │         Expression (Right Pre Join Actions)                            │
+ 9. │           Expression (Post Join Actions)                               │
+10. │             Join (JOIN FillRightFirst)                                 │
+11. │               Expression (Left Pre Join Actions)                       │
+12. │                 Expression (Change column names to column identifiers) │
+13. │                   ReadFromMergeTree (default.test1)                    │
+14. │               Expression (Right Pre Join Actions)                      │
+15. │                 Expression (Change column names to column identifiers) │
+16. │                   ReadFromMergeTree (default.test2)                    │
+    └────────────────────────────────────────────────────────────────────────┘
+
+50 rows in set. Elapsed: 4.384 sec. Processed 122.10 million rows, 2.90 GB (27.85 million rows/s., 660.94 MB/s.)
+Peak memory usage: 11.24 GiB
