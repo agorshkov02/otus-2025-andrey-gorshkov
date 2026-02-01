@@ -1,0 +1,58 @@
+scope: "andrey-patroni-2"
+namespace: "/db/"
+name: "andrey-patroni-2-1"
+restapi:
+  listen: 10.128.0.103:8008
+  connect_address: 10.128.0.103:8008
+etcd:
+  hosts:
+    - 10.128.0.100:2379
+    - 10.128.0.101:2379
+    - 10.128.0.102:2379
+bootstrap:
+  dcs:
+    ttl: 30
+    loop_wait: 10
+    retry_timeout: 10
+    maximum_lag_on_failover: 1048576
+    synchronous_mode: false
+    postgresql:
+      use_pg_rewind: true
+      use_slots: true
+      parameters:
+        wal_level: replica
+        hot_standby: "on"
+  initdb:
+    - encoding: UTF8
+  pg_hba:
+    - host replication andrey-replication 10.128.0.0/16 md5
+    - host all all 10.128.0.0/16 md5
+    - host all all 37.151.149.121/32 md5
+  users:
+    admin:
+      password: "123"
+      options:
+        - createrole
+        - createdb
+    andrey-replication:
+      password: "123"
+      options:
+        - replication
+
+postgresql:
+  listen: 10.128.0.103:5432
+  connect_address: 10.128.0.103:5432
+  data_dir: /var/lib/postgresql/18/main
+  bin_dir: /usr/lib/postgresql/18/bin
+  parameters:
+    listen_addresses: "*"
+  authentication:
+    replication:
+      username: andrey-replication
+      password: "123"
+    rewind:
+      username: postgres
+      password: "123"
+    superuser:
+      username: postgres
+      password: "123"

@@ -1,0 +1,13 @@
+[Unit]
+After=network.target
+Description=andrey patroni 2 etcd
+
+[Service]
+EnvironmentFile=-/etc/default/etcd
+ExecStart=/usr/local/bin/etcd
+LimitNOFILE=65536
+Restart=on-failure
+User=etcd
+
+[Install]
+WantedBy=multi-user.target
