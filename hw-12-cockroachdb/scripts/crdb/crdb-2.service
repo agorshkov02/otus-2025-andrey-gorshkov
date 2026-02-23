@@ -1,0 +1,24 @@
+[Unit]
+Description=CockroachDB node 2
+After=network.target
+
+[Service]
+Type=notify
+User=cockroach
+WorkingDirectory=/var/lib/cockroach
+ExecStart=/usr/local/bin/cockroach start \
+  --insecure \
+  --store=/var/lib/cockroach \
+  --listen-addr=10.128.0.102:26257 \
+  --http-addr=10.128.0.102:8080 \
+  --advertise-addr=10.128.0.102:26257 \
+  --join=10.128.0.101:26257,10.128.0.102:26257,10.128.0.103:26257 \
+  --cache=25% \
+  --max-sql-memory=25%
+
+Restart=always
+RestartSec=5
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

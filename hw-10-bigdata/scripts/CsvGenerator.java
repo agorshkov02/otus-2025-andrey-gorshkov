@@ -1,10 +1,9 @@
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import static java.nio.file.StandardOpenOption.*;
 import java.time.Instant;
 import java.util.concurrent.ThreadLocalRandom;
-
-import static java.nio.file.StandardOpenOption.*;
 
 public final class CsvGenerator {
 
@@ -35,7 +34,13 @@ public final class CsvGenerator {
         byte[] line = new byte[MAX_LINE_BYTES];
         ThreadLocalRandom tlr = ThreadLocalRandom.current();
         // 16MB buffer
-        try (OutputStream os = new BufferedOutputStream(Files.newOutputStream(targetPath, CREATE, TRUNCATE_EXISTING, WRITE), 16 * 1024 * 1024)) {
+        try (
+            OutputStream os = new BufferedOutputStream(
+                targetPath == null
+                    ? System.out
+                    : Files.newOutputStream(targetPath, CREATE, TRUNCATE_EXISTING, WRITE), 16 * 1024 * 1024
+            )
+        ) {
             os.write(HEADER);
             bytesWritten += HEADER.length;
             while (bytesWritten < targetBytes) {
@@ -58,7 +63,10 @@ public final class CsvGenerator {
             os.flush();
         }
         System.out.println(
-            "Bytes written: " + bytesWritten + ", target file (absolute path): " + targetPath.toAbsolutePath() + ", target bytes: " + targetBytes);
+            targetPath == null
+                ? "Bytes written: " + bytesWritten + ", target bytes: " + targetBytes
+                : "Bytes written: " + bytesWritten + ", target file (absolute path): " + targetPath.toAbsolutePath() + ", target bytes: " + targetBytes
+        );
     }
 
     private static int digits10(long v) {
@@ -111,11 +119,17 @@ public final class CsvGenerator {
                 if (isHelp(args[0])) {
                     printUsageAndExit();
                 }
+                if ("-".equals(args[0])) {
+                    return new Cli(null, DEFAULT_TARGET_BYTES);    
+                }
                 return new Cli(Path.of(args[0]), DEFAULT_TARGET_BYTES);
             }
             if (args.length == 2) {
                 if (isHelp(args[0]) || isHelp(args[1])) {
                     printUsageAndExit();
+                }
+                if ("-".equals(args[0])) {
+                    return new Cli(null, parseSizeToBytes(args[1]));
                 }
                 return new Cli(Path.of(args[0]), parseSizeToBytes(args[1]));
             }
