@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: yugabyte
+  namespace: yugabyte
+spec:
+  clusterIP: None
+  ports:
+    - name: master-rpc
+      port: 7100
+    - name: tserver-rpc
+      port: 9100
+  selector:
+    app: yugabyte    
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: yugabyte-ysql
+  namespace: yugabyte
+spec:
+  ports:
+    - name: ysql
+      port: 5433
+      targetPort: 5433
+  selector:
+    app: yugabyte

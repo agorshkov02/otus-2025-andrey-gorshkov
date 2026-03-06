@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: yugabyte-start
+  namespace: yugabyte
+data:
+  start-yb.sh: |
+    #!/bin/bash
+
+    POD_NAME=$(hostname)
+    NAMESPACE=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
+
+    REPLICAS=3
+
+    MASTER_ADDRESSES=""
+    
+    i=0
+
+    while [ $i -lt $REPLICAS ]
+    do
+      addr="yugabyte-$i.yugabyte.$NAMESPACE.svc.cluster.local:7100"
+
+      if [ -z "$MASTER_ADDRESSES" ]; then
+        MASTER_ADDRESSES=$addr
+      else
+        MASTER_ADDRESSES="$MASTER_ADDRESSES,$addr"
+      fi
+
+      i=$((i+1))
+    done
+
+    echo "Master addresses: $MASTER_ADDRESSES"
+
+    /home/yugabyte/bin/yb-master \
+      --fs_data_dirs=/var/lib/yugabyte \
+      --rpc_bind_addresses=0.0.0.0 \
+      --server_broadcast_addresses=$POD_NAME.yugabyte.$NAMESPACE.svc.cluster.local:7100 \
+      --master_addresses=$MASTER_ADDRESSES \
+      --replication_factor=3 \
+      --ysql_enable_auth=false &
+
+    sleep 2
+
+    /home/yugabyte/bin/yb-tserver \
+      --fs_data_dirs=/var/lib/yugabyte \
+      --rpc_bind_addresses=0.0.0.0 \
+      --server_broadcast_addresses=$POD_NAME.yugabyte.$NAMESPACE.svc.cluster.local:9100 \
+      --tserver_master_addrs=$MASTER_ADDRESSES \
+      --memory_limit_hard_bytes=2684354560 \
+      --ysql_enable_auth=false \
+      --start_pgsql_proxy \
+      --pgsql_proxy_bind_address=0.0.0.0 \
+      --cql_proxy_bind_address=0.0.0.0 &
+
+    wait

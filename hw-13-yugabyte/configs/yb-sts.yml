@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: yugabyte
+  namespace: yugabyte
+spec:
+  serviceName: yugabyte
+  replicas: 3
+  selector:
+    matchLabels:
+      app: yugabyte
+  template:
+    metadata:
+      labels:
+        app: yugabyte
+    spec:
+      containers:
+        - name: yugabyte
+          image: yugabytedb/yugabyte:2.21.0.0-b545
+          imagePullPolicy: IfNotPresent
+          command: ["/bin/bash", "/opt/yb/start-yb.sh"]
+          ports:
+            - containerPort: 7100
+              name: master-rpc
+            - containerPort: 9100
+              name: tserver-rpc
+            - containerPort: 5433
+              name: ysql
+          resources:
+            requests:
+              cpu: "2"
+              memory: "4Gi"
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/yugabyte
+            - name: start-script
+              mountPath: /opt/yb/start-yb.sh
+              subPath: start-yb.sh
+      volumes:
+        - name: start-script
+          configMap:
+            name: yugabyte-start
+            defaultMode: 0755
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
